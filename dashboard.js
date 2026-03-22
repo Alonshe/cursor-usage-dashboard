@@ -1,7 +1,7 @@
 /* Cursor Spend Dashboard — Extension JS (MV3 CSP-compliant, no inline handlers) */
 "use strict";
 
-const TEAM_ID = "REPLACE_WITH_YOUR_TEAM_ID";
+let TEAM_ID = null;
 const COLORS = [
   "#6c5ce7",
   "#54a0ff",
@@ -408,6 +408,10 @@ document.addEventListener("click", function (e) {
 
 // ── API ──
 function getApiUrl() {
+  if (!TEAM_ID) {
+    toast("Team ID not set. Configure it in the extension popup.");
+    return null;
+  }
   if (!drpStart || !drpEnd) return null;
   const s = fmtISO(drpStart),
     e = fmtISO(drpEnd);
@@ -2222,7 +2226,9 @@ renderSnapshot();
         "cursorCsvUrl",
         "cursorCsvTimestamp",
         "cursorTimezone",
+        "cursorTeamId",
       ]);
+      TEAM_ID = data.cursorTeamId || null;
       initTimezoneSelect(data.cursorTimezone);
       if (data.cursorCsvData) {
         rawRows = parseCSV(data.cursorCsvData);

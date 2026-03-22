@@ -48,23 +48,62 @@ h2 {
 .btn-primary:hover { filter: brightness(1.1); background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
 .hint { font-size: 10px; color: #565b73; text-align: center; margin-top: 6px; line-height: 1.5; }
 .status { display: none; font-size: 11px; color: #ff6b6b; text-align: center; margin-top: 8px; }
+.setup-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #2a2f44;
+  border-radius: 8px;
+  background: #151823;
+  color: #e2e4ea;
+  font-size: 13px;
+  font-family: inherit;
+  margin-bottom: 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.setup-input:focus { border-color: #6c5ce7; }
+.settings-link {
+  font-size: 10px;
+  color: #565b73;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.settings-link:hover { color: #a29bfe; }
 </style>
 </head>
 <body>
   <h2>⚡ Cursor Spend Dashboard</h2>
   <div class="sub">Visualize your team's Cursor usage</div>
 
-  <button class="btn btn-primary" id="open-dash">
-    <span class="icon">📊</span> Open Dashboard
-  </button>
+  <!-- Setup view (first run) -->
+  <div id="setup-view" style="display:none">
+    <input type="text" class="setup-input" id="team-id-input" placeholder="Enter your Team ID">
+    <button class="btn btn-primary" id="save-team-id">
+      <span class="icon">💾</span> Save & Continue
+    </button>
+    <div class="hint">
+      Find your Team ID in the URL when visiting<br>
+      cursor.com/dashboard (the number in the URL).
+    </div>
+  </div>
 
-  <button class="btn" id="open-last">
-    <span class="icon">🔄</span> Re-open Last Report
-  </button>
+  <!-- Main view -->
+  <div id="main-view" style="display:none">
+    <button class="btn btn-primary" id="open-dash">
+      <span class="icon">📊</span> Open Dashboard
+    </button>
 
-  <div class="hint">
-    Go to Cursor → Usage → Export CSV.<br>
-    The dashboard button appears automatically.
+    <button class="btn" id="open-last">
+      <span class="icon">🔄</span> Re-open Last Report
+    </button>
+
+    <div class="hint">
+      Go to Cursor → Usage → Export CSV.<br>
+      The dashboard button appears automatically.
+    </div>
+
+    <div class="settings-link" id="change-team-id">Change Team ID</div>
   </div>
 
   <div class="status" id="status"></div>
