@@ -16,3 +16,9 @@ node_modules/
 
 # Misc
 .env
+
+# Cursor
+.cursor/
+
+# Claude
+.claude/
