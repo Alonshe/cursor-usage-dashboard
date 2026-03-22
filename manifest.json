@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "Cursor Spend Dashboard",
+  "version": "1.0.0",
+  "description": "Visualize your Cursor team usage with rich charts and breakdowns — auto-detects CSV exports from Cursor's dashboard.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://cursor.com/*", "https://www.cursor.com/*"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://cursor.com/*", "https://www.cursor.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard.html"],
+      "matches": ["https://cursor.com/*", "https://www.cursor.com/*"]
+    }
+  ]
+}

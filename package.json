@@ -1,0 +1,10 @@
+{
+  "name": "cursor-usage-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Visualize your Cursor team usage with rich charts and breakdowns — auto-detects CSV exports from Cursor's dashboard.",
+  "scripts": {
+    "package": "zip -r cursor-usage-dashboard.zip manifest.json popup.html popup.js content.js dashboard.html dashboard.js chart.umd.min.js html2canvas.min.js icons/"
+  },
+  "license": "MIT"
+}

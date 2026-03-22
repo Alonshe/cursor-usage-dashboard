@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 280px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0c0e14;
+  color: #e2e4ea;
+  padding: 16px;
+}
+h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, #6c5ce7, #48dbfb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sub { font-size: 11px; color: #8b90a5; margin-bottom: 14px; }
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #2a2f44;
+  border-radius: 10px;
+  background: #151823;
+  color: #e2e4ea;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  margin-bottom: 8px;
+}
+.btn:hover { border-color: #6c5ce7; background: #1c2033; }
+.btn .icon { font-size: 16px; }
+.btn-primary {
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-primary:hover { filter: brightness(1.1); background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+.hint { font-size: 10px; color: #565b73; text-align: center; margin-top: 6px; line-height: 1.5; }
+.status { display: none; font-size: 11px; color: #ff6b6b; text-align: center; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <h2>⚡ Cursor Spend Dashboard</h2>
+  <div class="sub">Visualize your team's Cursor usage</div>
+
+  <button class="btn btn-primary" id="open-dash">
+    <span class="icon">📊</span> Open Dashboard
+  </button>
+
+  <button class="btn" id="open-last">
+    <span class="icon">🔄</span> Re-open Last Report
+  </button>
+
+  <div class="hint">
+    Go to Cursor → Usage → Export CSV.<br>
+    The dashboard button appears automatically.
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
