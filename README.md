@@ -1,4 +1,4 @@
-# Cursor Spend Dashboard
+# Cursor Usage Dashboard
 
 A Chrome extension that visualizes your Cursor team's usage with rich charts and breakdowns.
 
