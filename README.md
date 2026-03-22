@@ -16,8 +16,9 @@ On first launch the extension will ask for your **Team ID**.
 To find it:
 
 1. Go to [cursor.com/dashboard](https://cursor.com/dashboard) and sign in
-2. Look at the URL — it contains a `teamId` parameter, e.g. `cursor.com/dashboard?teamId=12345678`
-3. Copy that number and paste it into the extension popup
+2. Click **Export CSV** — a green banner will appear with a download URL
+3. Look at that URL — it contains `teamId=XXXXX`. Copy that number
+4. Paste it into the extension popup when prompted
 
 You can change the Team ID later by clicking **Change Team ID** in the popup.
 
