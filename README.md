@@ -2,6 +2,17 @@
 
 A Chrome extension that visualizes your Cursor team's usage with rich charts and breakdowns.
 
+## Screenshots
+
+### Dashboard Overview
+![Dashboard Overview](screenshots/dashboard-top.png)
+
+### Charts & Visualizations
+![Charts](screenshots/dashboard-charts.png)
+
+### Developer Drilldown
+![Developer Drilldown](screenshots/developer-drilldown.png)
+
 ## Installation
 
 1. Clone or download this repository
