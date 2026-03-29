@@ -904,6 +904,172 @@ function renderActivityFeed(user) {
   renderFeed();
 }
 
+function renderMainActivityFeed() {
+  if (!rawRows) return;
+  const rows = (selectedDevs.size === 0 ? rawRows : rawRows.filter((r) => selectedDevs.has(r.User)))
+    .sort((a, b) => (b.Date || "").localeCompare(a.Date || ""));
+
+  const models = [...new Set(rows.map((r) => r.Model || "?"))].sort();
+  const types = [...new Set(rows.map((r) => r.Kind || ""))].filter(Boolean).sort();
+  const devs = [...new Set(rows.map((r) => r.User))].sort();
+  const allTokens = rows.map((r) => parseInt(r["Total Tokens"]) || 0).sort((a, b) => a - b);
+  const p95 = allTokens[Math.floor(allTokens.length * 0.95)] || 1;
+  const maxTokens = Math.max(1, p95);
+
+  const modelColors = {};
+  models.forEach((m, i) => (modelColors[m] = COLORS[i % COLORS.length]));
+  const devColors = {};
+  devs.forEach((u) => {
+    const ci = D.users.indexOf(u);
+    devColors[u] = ci >= 0 ? COLORS[ci] : COLORS[devs.indexOf(u) % COLORS.length];
+  });
+
+  let activeModels = new Set();
+  let activeTypes = new Set();
+  let activeDevs = new Set();
+
+  function matchesFilters(r) {
+    if (activeModels.size && !activeModels.has(r.Model || "?")) return false;
+    if (activeTypes.size && !activeTypes.has(r.Kind || "")) return false;
+    if (activeDevs.size && !activeDevs.has(r.User)) return false;
+    return true;
+  }
+
+  function renderFilters() {
+    const el = document.getElementById("main-feed-filters");
+    el.innerHTML = "";
+
+    function addGroup(label, items, renderChip) {
+      const group = document.createElement("div");
+      group.className = "feed-filter-group";
+      const lbl = document.createElement("span");
+      lbl.className = "feed-filter-label";
+      lbl.textContent = label;
+      group.appendChild(lbl);
+      const chips = document.createElement("div");
+      chips.className = "feed-filter-chips";
+      items.forEach((item) => renderChip(item, chips));
+      group.appendChild(chips);
+      el.appendChild(group);
+    }
+
+    addGroup("Developers", devs, (u, group) => {
+      const chip = document.createElement("button");
+      const c = devColors[u];
+      chip.className = "feed-chip" + (activeDevs.has(u) ? " active" : "");
+      chip.textContent = shortName(u);
+      chip.style.borderColor = activeDevs.has(u) ? c : "";
+      chip.style.color = activeDevs.has(u) ? c : "";
+      chip.style.background = activeDevs.has(u) ? c + "18" : "";
+      chip.addEventListener("click", () => {
+        activeDevs.has(u) ? activeDevs.delete(u) : activeDevs.add(u);
+        renderFilters();
+        renderFeed();
+      });
+      group.appendChild(chip);
+    });
+
+    addGroup("Models", models, (m, group) => {
+      const chip = document.createElement("button");
+      chip.className = "feed-chip" + (activeModels.has(m) ? " active" : "");
+      chip.textContent = m;
+      chip.style.borderColor = activeModels.has(m) ? modelColors[m] : "";
+      chip.style.color = activeModels.has(m) ? modelColors[m] : "";
+      chip.style.background = activeModels.has(m) ? modelColors[m] + "18" : "";
+      chip.addEventListener("click", () => {
+        activeModels.has(m) ? activeModels.delete(m) : activeModels.add(m);
+        renderFilters();
+        renderFeed();
+      });
+      group.appendChild(chip);
+    });
+
+    addGroup("Type", types, (t, group) => {
+      const chip = document.createElement("button");
+      chip.className = "feed-chip" + (activeTypes.has(t) ? " active" : "");
+      chip.textContent = t;
+      chip.addEventListener("click", () => {
+        activeTypes.has(t) ? activeTypes.delete(t) : activeTypes.add(t);
+        renderFilters();
+        renderFeed();
+      });
+      group.appendChild(chip);
+    });
+  }
+
+  function renderFeed() {
+    const container = document.getElementById("main-activity-feed");
+    const filtered = rows.filter(matchesFilters);
+    if (!filtered.length) {
+      container.innerHTML = '<div class="feed-empty">No requests match the selected filters</div>';
+      return;
+    }
+
+    const groups = {};
+    filtered.forEach((r) => {
+      const date = getDateInTimezone(r.Date, currentTimezone);
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(r);
+    });
+
+    let html = "";
+    for (const date of Object.keys(groups).sort().reverse()) {
+      const items = groups[date];
+      const dayCost = items.reduce((s, r) => s + (parseFloat(r.Cost) || 0), 0);
+      const dayReqs = items.length;
+      const dp = date.split("-");
+      const dateLabel = dp[1] + "/" + dp[2] + "/" + dp[0];
+
+      html += `<div class="feed-group collapsed" data-main-feed-date="${date}">`;
+      html += `<div class="feed-date-header collapsed" data-main-feed-toggle="${date}">`;
+      html += `<span class="feed-date-label"><span class="feed-chevron">▼</span> ${dateLabel}</span>`;
+      html += `<span class="feed-date-meta"><span>${dayReqs} req</span><span>${fmt(dayCost)}</span></span>`;
+      html += `</div>`;
+      html += `<div class="feed-group-items">`;
+
+      for (const r of items) {
+        const time = r.Date ? formatTimeInTimezone(r.Date, currentTimezone) : "--:--";
+        const user = r.User || "?";
+        const model = r.Model || "?";
+        const tokens = parseInt(r["Total Tokens"]) || 0;
+        const cost = parseFloat(r.Cost) || 0;
+        const kind = r.Kind || "";
+        const barPct = Math.min(100, Math.max(2, (tokens / maxTokens) * 100));
+        const mColor = modelColors[model] || COLORS[0];
+        const uColor = devColors[user] || COLORS[0];
+        const typeClass = kind === "On-Demand" ? "on-demand" : "included";
+
+        html += `<div class="feed-item">`;
+        html += `<span class="feed-time">${time}</span>`;
+        html += `<span class="feed-dev" title="${user}" style="background:${uColor}20;color:${uColor}">${shortName(user)}</span>`;
+        html += `<span class="feed-model" title="${model}" style="background:${mColor}20;color:${mColor}">${model}</span>`;
+        html += `<span class="feed-tokens">`;
+        html += `<span class="feed-token-bar" style="width:${barPct}%;background:${mColor}66"></span>`;
+        html += `<span class="feed-token-label">${fmtK(tokens)}</span>`;
+        html += `</span>`;
+        html += `<span class="feed-type ${typeClass}">${kind}</span>`;
+        html += `<span class="feed-cost${cost >= 0.5 ? " high" : ""}">${fmt(cost)}</span>`;
+        html += `</div>`;
+      }
+
+      html += `</div></div>`;
+    }
+
+    container.innerHTML = html;
+
+    container.querySelectorAll("[data-main-feed-toggle]").forEach((hdr) => {
+      hdr.addEventListener("click", () => {
+        const group = hdr.closest(".feed-group");
+        group.classList.toggle("collapsed");
+        hdr.classList.toggle("collapsed");
+      });
+    });
+  }
+
+  renderFilters();
+  renderFeed();
+}
+
 function closeModal() {
   document.getElementById("modal-overlay").classList.remove("show");
   document.body.style.overflow = "";
@@ -1053,6 +1219,7 @@ function renderDashboard() {
   document.getElementById("dashboard").innerHTML = `<div class="grid">
     <div class="kpi-row" id="kpis"></div>
     <div class="card full"><h3>Developer Breakdown</h3><div class="table-wrap"><table id="t-users"></table></div></div>
+    <div class="card full"><h3>Request Activity</h3><div id="main-feed-filters" class="feed-filters"></div><div id="main-activity-feed" class="activity-feed"></div></div>
     <div class="card full"><h3>Model Usage per Developer</h3><div class="table-wrap"><table id="t-models"></table></div></div>
     <div class="chart-row">
       <div class="card"><h3>Daily Spend Trend</h3><div style="height:300px"><canvas id="c-daily"></canvas></div></div>
@@ -1108,6 +1275,7 @@ function renderDashboard() {
     .join("");
 
   renderTables();
+  renderMainActivityFeed();
   rebuildCharts();
 }
 

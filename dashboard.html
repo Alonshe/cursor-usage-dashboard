@@ -139,7 +139,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 /* Activity Feed */
 .feed-section{margin-top:16px}
 .feed-section h4{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:12px}
-.feed-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.feed-filters{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.feed-filter-group{display:grid;grid-template-columns:80px 1fr;gap:6px;align-items:baseline;padding-bottom:6px;border-bottom:1px solid color-mix(in srgb, var(--border) 50%, transparent)}
+.feed-filter-group:last-child{border-bottom:none;padding-bottom:0}
+.feed-filter-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.feed-filter-chips{display:flex;flex-wrap:wrap;gap:6px}
 .feed-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
 .feed-chip:hover{border-color:var(--accent);color:var(--text)}
 .feed-chip.active{background:rgba(108,92,231,.15);border-color:var(--accent);color:var(--accent2)}
@@ -159,6 +163,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .feed-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:8px;transition:background .12s;min-height:38px}
 .feed-item:hover{background:var(--hover-row)}
 .feed-time{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;width:44px;flex-shrink:0}
+.feed-dev{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;flex-shrink:0}
 .feed-model{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;flex-shrink:0}
 .feed-tokens{display:flex;align-items:center;gap:6px;flex:1;min-width:0}
 .feed-token-bar{height:6px;border-radius:3px;min-width:2px;transition:width .5s;flex-shrink:1}
